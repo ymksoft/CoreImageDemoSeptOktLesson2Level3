@@ -36,7 +36,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.image = [UIImage imageNamed:@"HDtimelapse.net_City_1150_hirez"];
-    [CIFilter sp_allFilteres]; // посмотреть список доступных фильтров вывод в окно отладчика
+    //[CIFilter sp_allFilteres]; // посмотреть список доступных фильтров вывод в окно отладчика
     
     [self setup];
     
@@ -96,7 +96,7 @@
 
 - (IBAction)showComplexFilter:(id)sender {
     
-    CIFilter *sepiaFilter = [CIFilter filterWithName:@"CISepiaFilter"];
+    CIFilter *sepiaFilter = [CIFilter filterWithName:@"CISepiaTone"];
     [sepiaFilter setValue:self.imageCI forKey:kCIInputImageKey];
     [sepiaFilter setValue:@(self.slider.value) forKey:@"inputIntensity"];
     
@@ -107,7 +107,8 @@
     [brightFilter setValue:@0.5 forKey:@"inputBrightness"];
     [brightFilter setValue:@0  forKey:@"inputSaturation"];
     [brightFilter setValue:randomFilter.outputImage forKey:kCIInputImageKey];
-    NSLog(@"%@",brightFilter); // свойства фильтра показать
+  
+    //NSLog(@"%@",brightFilter); // свойства фильтра показать
     
     // картинка яркость и шум
     CIImage *randomeNoiseImage = [[brightFilter outputImage] imageByCroppingToRect:self.imageCI.extent];
