@@ -36,10 +36,10 @@
     self.originalImageView.image = image;
     self.image = image;
     
-    [self filterImage];
+    [self filterImage:@0.8];
 }
 
--(void) filterImage {
+-(void) filterImage:(id)value {
     CIImage *imageToFilter = [CIImage imageWithCGImage:self.image.CGImage];
     CIFilter *filter = [CIFilter filterWithName:@"CISepiaTone"];
     
@@ -47,7 +47,7 @@
     
     NSParameterAssert(filter);
     
-    [filter setValue:@0.8 forKey:@"inputIntensity"];
+    [filter setValue:value forKey:@"inputIntensity"];
     
     CIImage *result = [filter outputImage];
     
@@ -61,8 +61,8 @@
     
 }
 
-- (IBAction)filterValueChanged:(id)sender {
-    
+- (IBAction)filterValueChanged:(UISlider *)sender {
+    [self filterImage:@(sender.value)];
 }
 
 @end
