@@ -17,6 +17,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *maxFilterValue;
 @property (weak, nonatomic) IBOutlet UILabel *minFilterValue;
 
+@property (strong, nonatomic) CIContext *context;
+@property (strong, nonatomic) CIImage *imageCI;
+
 @end
 
 @implementation FilterPhotoViewController
@@ -32,27 +35,33 @@
 #pragma mark - Setup
 
 -(void) setup {
+    self.context = [CIContext contextWithOptions:nil];
     UIImage *image = [UIImage imageNamed:@"HDtimelapse.net_City_1150_hirez"];
     self.originalImageView.image = image;
     self.image = image;
+    self.filter = [CIFilter filterWithName:@"CISepiaTone"];
+    self.imageCI = [CIImage imageWithCGImage:self.image.CGImage];
+    
+    [self.filter setValue:self.imageCI forKey:kCIInputImageKey];
     
     [self filterImage:@0.8];
 }
 
 -(void) filterImage:(id)value {
-    CIImage *imageToFilter = [CIImage imageWithCGImage:self.image.CGImage];
-    CIFilter *filter = [CIFilter filterWithName:@"CISepiaTone"];
+   
+    CIFilter *filter = self.filter;
     
-    [filter setValue:imageToFilter forKey:kCIInputImageKey];
-    
-    NSParameterAssert(filter);
     
     [filter setValue:value forKey:@"inputIntensity"];
     
     CIImage *result = [filter outputImage];
     
-    self.filteredImageView.image = [UIImage imageWithCIImage:result];
+    // создание картинки с помощью контекста - ускорение
+    CGImageRef resultRef = [self.context createCGImage:result fromRect:[result extent]];
     
+    self.filteredImageView.image = [UIImage imageWithCGImage:resultRef];
+    
+    CGImageRelease(resultRef);
 }
 
 #pragma mark - UI Events
