@@ -7,6 +7,8 @@
 //
 
 #import "FilterPhotoViewController.h"
+#import <CZPhotoPickerController/CZPhotoPickerController.h>
+#import "CIFilter+SpExtention.h"
 
 @interface FilterPhotoViewController ()
 
@@ -20,6 +22,8 @@
 @property (strong, nonatomic) CIContext *context;
 @property (strong, nonatomic) CIImage *imageCI;
 
+@property (strong, nonatomic) CZPhotoPickerController *photoPicker;
+
 @end
 
 @implementation FilterPhotoViewController
@@ -28,6 +32,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.image = [UIImage imageNamed:@"HDtimelapse.net_City_1150_hirez"];
+    [CIFilter sp_allFilteres]; // посмотреть список доступных фильтров вывод в окно отладчика
+    
     [self setup];
     
 }
@@ -36,9 +43,8 @@
 
 -(void) setup {
     self.context = [CIContext contextWithOptions:nil];
-    UIImage *image = [UIImage imageNamed:@"HDtimelapse.net_City_1150_hirez"];
-    self.originalImageView.image = image;
-    self.image = image;
+    
+    self.originalImageView.image = self.image;
     self.filter = [CIFilter filterWithName:@"CISepiaTone"];
     self.imageCI = [CIImage imageWithCGImage:self.image.CGImage];
     
@@ -50,7 +56,6 @@
 -(void) filterImage:(id)value {
    
     CIFilter *filter = self.filter;
-    
     
     [filter setValue:value forKey:@"inputIntensity"];
     
@@ -67,11 +72,63 @@
 #pragma mark - UI Events
 
 - (IBAction)selectPhotoPressed:(id)sender {
+
+    self.photoPicker = [[CZPhotoPickerController alloc] initWithCompletionBlock:^(UIImagePickerController *imagePickerController, NSDictionary *imageInfoDict) {
+        UIImage *image = [imageInfoDict valueForKey:UIImagePickerControllerEditedImage];
+        if(!image) image = [imageInfoDict valueForKey:UIImagePickerControllerOriginalImage];
+        if(image) {
+            self.image = image;
+            [self setup];
+        }
+        [imagePickerController dismissViewControllerAnimated:YES completion:nil];
+    }];
     
+    self.photoPicker.allowsEditing =YES;
+    [self.photoPicker presentFromViewController:self];
 }
 
 - (IBAction)filterValueChanged:(UISlider *)sender {
     [self filterImage:@(sender.value)];
+}
+
+- (IBAction)showComplexFilter:(id)sender {
+    
+    CIFilter *sepiaFilter = [CIFilter filterWithName:@"CISepiaFilter"];
+    [sepiaFilter setValue:self.imageCI forKey:kCIInputImageKey];
+    [sepiaFilter setValue:@(self.slider.value) forKey:@"inputIntensity"];
+    
+    CIFilter *randomFilter = [CIFilter filterWithName:@"CIRandomGenerator"];
+    
+    CIFilter *brightFilter = [CIFilter filterWithName:@"CIColorControls"];
+    
+    [brightFilter setValue:@0.5 forKey:@"inputBrightness"];
+    [brightFilter setValue:@0  forKey:@"inputSaturation"];
+    [brightFilter setValue:randomFilter.outputImage forKey:kCIInputImageKey];
+    NSLog(@"%@",brightFilter); // свойства фильтра показать
+    
+    // картинка яркость и шум
+    CIImage *randomeNoiseImage = [[brightFilter outputImage] imageByCroppingToRect:self.imageCI.extent];
+    
+    
+    CIFilter *lightBlend = [CIFilter filterWithName:@"CIHardLightBlendMode"];
+    [lightBlend setValue:sepiaFilter.outputImage forKey:kCIInputImageKey];
+    [lightBlend setValue:randomeNoiseImage forKey:kCIInputBackgroundImageKey];
+    
+    CIFilter *finalFilter = [CIFilter filterWithName:@"CIVignette"];
+    [finalFilter setValue:lightBlend.outputImage forKey:kCIInputImageKey];
+    [finalFilter setValue:@3 forKey:@"inputIntensity"];
+    [finalFilter setValue:@20 forKey:@"inputRadius"];
+    
+    CIImage *result = [finalFilter outputImage];
+    
+    // создание картинки с помощью контекста - ускорение
+    CGImageRef resultRef = [self.context createCGImage:result fromRect:[result extent]];
+    
+    self.filteredImageView.image = [UIImage imageWithCGImage:resultRef];
+    
+    CGImageRelease(resultRef);
+    
+    
 }
 
 @end
