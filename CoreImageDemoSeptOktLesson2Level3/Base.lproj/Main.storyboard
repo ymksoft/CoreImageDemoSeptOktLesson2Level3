@@ -70,15 +70,25 @@
                                     <action selector="showComplexFilter:" destination="cuf-SW-oKE" eventType="touchUpInside" id="lfR-d8-fBc"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ktL-ri-0xi">
+                                <rect key="frame" x="292" y="686" width="34" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Save"/>
+                                <connections>
+                                    <action selector="saveFilterFoto:" destination="cuf-SW-oKE" eventType="touchUpInside" id="cX3-4B-zGr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="leadingMargin" secondItem="SQi-tK-PlD" secondAttribute="leading" id="1wC-K3-mn9"/>
+                            <constraint firstItem="ktL-ri-0xi" firstAttribute="centerY" secondItem="dfp-YF-n4d" secondAttribute="centerY" id="4ub-Do-pol"/>
                             <constraint firstAttribute="trailingMargin" secondItem="1xg-Pq-Inh" secondAttribute="trailing" id="7aw-GG-x4T"/>
                             <constraint firstItem="1xg-Pq-Inh" firstAttribute="top" secondItem="Q3q-Pd-UGd" secondAttribute="bottom" constant="9" id="8iD-lj-agg"/>
                             <constraint firstAttribute="leadingMargin" secondItem="PuE-Nw-zTp" secondAttribute="leading" id="8tL-ba-tfO"/>
                             <constraint firstItem="0Ug-uR-oiN" firstAttribute="width" secondItem="icx-aA-41w" secondAttribute="width" id="9Uk-T2-ZCg"/>
+                            <constraint firstItem="dfp-YF-n4d" firstAttribute="leading" secondItem="ktL-ri-0xi" secondAttribute="trailing" constant="30" id="CjK-hZ-pde"/>
                             <constraint firstItem="PuE-Nw-zTp" firstAttribute="top" secondItem="1xg-Pq-Inh" secondAttribute="bottom" constant="32" id="EmQ-HB-lI2"/>
                             <constraint firstItem="0Ug-uR-oiN" firstAttribute="height" secondItem="icx-aA-41w" secondAttribute="height" id="JiL-tr-AjD"/>
                             <constraint firstItem="6Qr-RA-Z8k" firstAttribute="top" secondItem="dfp-YF-n4d" secondAttribute="bottom" constant="20" id="Lyx-rI-8cm"/>

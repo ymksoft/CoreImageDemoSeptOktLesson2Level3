@@ -7,6 +7,9 @@
 //
 
 #import "FilterPhotoViewController.h"
+
+@import AssetsLibrary;// для работы с альбомом
+
 #import <CZPhotoPickerController/CZPhotoPickerController.h>
 #import "CIFilter+SpExtention.h"
 
@@ -128,6 +131,22 @@
     
     CGImageRelease(resultRef);
     
+    
+}
+
+- (IBAction)saveFilterFoto:(id)sender {
+    
+    UIImage *image = self.filteredImageView.image;
+    
+    ALAssetsLibrary *lib = [ALAssetsLibrary new];
+    
+    [lib writeImageToSavedPhotosAlbum:image.CGImage orientation:self.image.imageOrientation completionBlock:^(NSURL *assetURL, NSError *error) {
+       
+        if(error) {
+            NSLog(@"error");
+        }
+        
+    }];
     
 }
 
